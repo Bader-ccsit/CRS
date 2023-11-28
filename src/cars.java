@@ -97,7 +97,7 @@ public class cars extends JFrame implements MouseListener{
         // Set the frame properties
         setTitle("Search For a Car");
         setBounds(1100,420,400,400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         ImageIcon icon = new ImageIcon("src/Assets/MyFrameAssets/Icon.jfif");
         setIconImage(icon.getImage());
         setVisible(true);

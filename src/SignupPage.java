@@ -9,6 +9,8 @@ import javax.xml.stream.events.Comment;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 
 public class SignupPage extends JFrame implements ActionListener{
@@ -30,8 +32,8 @@ public class SignupPage extends JFrame implements ActionListener{
     JLabel PersonalIDLabel = new JLabel("Passport No. / National ID:");
     JTextField PersonalIDField = new JTextField(15);
 
-    JLabel AgeLabel = new JLabel("Age:");
-    JTextField AgeField = new JTextField(15);
+    JLabel EmailLabel = new JLabel("Email:");
+    JTextField EmailField = new JTextField(15);
 
     JLabel CarLabel = new JLabel("Select a Car");
     JComboBox CarField = new JComboBox<>();
@@ -59,12 +61,20 @@ public class SignupPage extends JFrame implements ActionListener{
 
     
         frame = new JFrame("SignUp");
-        frame.setBounds(0,0,400,435);
+        frame.setBounds(0,0,400,440);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
         frame.setLayout(new BorderLayout());
         ImageIcon icon = new ImageIcon("src/Assets/MyFrameAssets/Icon.jfif");
         frame.setIconImage(icon.getImage());
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // JOptionPane.showMessageDialog(MessageLabel, "Signout the System to Close the window", "Notice", JOptionPane.ERROR_MESSAGE);
+                MyFrame.SignUp.setEnabled(true);
+            }
+        });
         
 
         JLabel mainText = new JLabel("Buy Your Car NOW!");
@@ -156,8 +166,8 @@ public class SignupPage extends JFrame implements ActionListener{
         p15.add(NationalityLabel, BorderLayout.WEST);
         p15.add(NationalityField, BorderLayout.EAST);
 
-        p14.add(AgeLabel, BorderLayout.WEST);
-        p14.add(AgeField, BorderLayout.EAST);
+        p14.add(EmailLabel, BorderLayout.WEST);
+        p14.add(EmailField, BorderLayout.EAST);
 
         p11.add(PersonalIDLabel, BorderLayout.WEST);
         p11.add(PersonalIDField, BorderLayout.EAST);
@@ -269,7 +279,7 @@ public class SignupPage extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == reset){
             NameField.setText("");
-            AgeField.setText("");
+            EmailField.setText("");
             NationalityField.setText("");
             PersonalIDField.setText("");
             CarField.setSelectedItem(Integer.valueOf(0));
@@ -285,7 +295,11 @@ public class SignupPage extends JFrame implements ActionListener{
                 flag=1;
             }
 
-            if(AgeField.getText().equals("")){
+            if(EmailField.getText().contains("@") == false){
+                JOptionPane.showMessageDialog(rootPane, "This is not a real Email BRO!", getTitle(), JOptionPane.ERROR_MESSAGE);
+                flag=1;
+            }
+            if(EmailField.getText().equals("")){
                 JOptionPane.showMessageDialog(rootPane, "The Age Field is Empty!", getTitle(), JOptionPane.ERROR_MESSAGE);
                 flag=1;
             }
@@ -300,8 +314,9 @@ public class SignupPage extends JFrame implements ActionListener{
                 flag=1;
             }
 
-            // if(CarField.getSelectedItem().equals(Integer.valueOf(0))){
+            // if(CarField.getSelectedItem()== null){
             //     JOptionPane.showMessageDialog(rootPane, "Choose a CAR please!", getTitle(), JOptionPane.ERROR_MESSAGE);
+            //     flag=1;
             // }
 
             if(jDateChooser1.getDate() == null){
@@ -316,6 +331,9 @@ public class SignupPage extends JFrame implements ActionListener{
 
             if(flag == 0){
                 JOptionPane.showMessageDialog(rootPane, "Your All Set", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+                MyFrame.SignUp.setEnabled(true);
+                frame.dispose();
+                
             }else{
                 flag = 0;
             }

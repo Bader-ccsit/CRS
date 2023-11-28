@@ -15,8 +15,8 @@ import java.awt.event.MouseListener;
 public class MyFrame extends JFrame implements ActionListener, MouseListener{
     
     JButton AboutUs;
-    JButton SignUp;
-    JButton SignIn;
+    static JButton SignUp;
+    static JButton SignIn;
      
     JMenuBar menuBar;
     JMenu filemenu;
@@ -253,6 +253,7 @@ public class MyFrame extends JFrame implements ActionListener, MouseListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
        if(e.getSource() == loadItem){
         JOptionPane.showMessageDialog(null, "the file has been loaded successfuly", "File loaded Conformation", JOptionPane.INFORMATION_MESSAGE);
        }
@@ -268,6 +269,8 @@ public class MyFrame extends JFrame implements ActionListener, MouseListener{
        if(e.getSource() == SignUp){
         IDandPasswords idandpasswords = new IDandPasswords();
             new SignupPage(idandpasswords.getLoginInfo());
+
+        SignUp.setEnabled(false);   //stopWorking
        }
 
        if(e.getSource() == AboutUs){
@@ -277,6 +280,8 @@ public class MyFrame extends JFrame implements ActionListener, MouseListener{
        if(e.getSource() == SignIn){
         IDandPasswords idandpasswords = new IDandPasswords();
         SigninPage signin = new SigninPage(idandpasswords.getLoginInfo());
+
+        SignIn.setEnabled(false);   //stopWorking
        }
 
 

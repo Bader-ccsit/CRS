@@ -3,10 +3,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -35,6 +38,17 @@ public class SigninPage implements ActionListener{
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
         frame.setLayout(new BorderLayout());
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                // JOptionPane.showMessageDialog(MessageLabel, "Signout the System to Close the window", "Notice", JOptionPane.ERROR_MESSAGE);
+                MyFrame.SignIn.setEnabled(true);
+            }
+        });
+
+
+
         
         JPanel p1 = new JPanel();
         p1.setLayout(null);
@@ -69,6 +83,7 @@ public class SigninPage implements ActionListener{
     }
     @Override
     public void actionPerformed(ActionEvent e) {
+        int loggedin=0;
         if(e.getSource() == resetButton){
             userIDField.setText("");
             userPasswordField.setText("");
@@ -85,6 +100,8 @@ public class SigninPage implements ActionListener{
                     MessageLabel.setText("Login Successful");
                     frame.dispose();
                     WelcomePage welcomepage = new WelcomePage(userID);
+
+                    loggedin=1;     //change the value for the signin
                 }
                 else{
                     MessageLabel.setForeground(Color.red);
@@ -95,6 +112,12 @@ public class SigninPage implements ActionListener{
             else{
                 MessageLabel.setForeground(Color.red);
                     MessageLabel.setText("Username NOT Found!");
+            }
+
+            if(loggedin==1){
+                MyFrame.SignIn.setEnabled(false);
+
+                
             }
         }
     }
