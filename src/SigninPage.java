@@ -1,11 +1,16 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -33,11 +38,14 @@ public class SigninPage implements ActionListener{
 
         
 
-        frame = new JFrame();
+        frame = new JFrame("SignIn");
         frame.setBounds(1100,0,400,400);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
         frame.setLayout(new BorderLayout());
+        ImageIcon icon = new ImageIcon("src/Assets/MyFrameAssets/Icon.jfif");
+        frame.setIconImage(icon.getImage());
+
 
         frame.addWindowListener(new WindowAdapter() {
             @Override
@@ -50,8 +58,55 @@ public class SigninPage implements ActionListener{
 
 
         
-        JPanel p1 = new JPanel();
-        p1.setLayout(null);
+        // JPanel p1 = new JPanel();
+        JPanel mainTop = new JPanel();
+        JPanel mainCenter = new JPanel();
+        JPanel mainBottom = new JPanel();
+
+
+
+
+        mainTop.setLayout(new FlowLayout(1,0,5));
+        mainTop.setBackground(new Color(255,238,153));
+        JLabel mainText = new JLabel("Login To Our System :)");
+        mainText.setFont(new Font("monospaced", Font.PLAIN, 15));
+        mainTop.add(mainText);
+
+
+        JLabel tom = new JLabel();
+        ImageIcon tomPhoto = new ImageIcon(new ImageIcon("src/Assets/LoginAssets/tom.png").getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH));
+        tom.setIcon(tomPhoto);
+        tom.setBounds(170, 20, 70, 70);
+        tom.setBorder(BorderFactory.createLineBorder(Color.RED, 2, true));
+
+
+        mainCenter.setBorder(BorderFactory.createLineBorder(new Color(0,128,255), 4, true));
+        mainCenter.setLayout(null);
+        mainCenter.setBackground(new Color(230,238,255));
+
+
+
+
+        userIDLabel.setFont(new Font("monospaced", Font.ITALIC, 13));
+        userPasswordLabel.setFont(new Font("monospaced", Font.ITALIC, 13));
+
+
+        loginButton.setBackground(new Color(230,255,238));
+        loginButton.setFont(new Font("monospaced", Font.PLAIN, 12));
+        loginButton.setFocusPainted(false);
+        loginButton.setBorderPainted(true);
+        loginButton.setFocusable(false);
+
+
+
+        resetButton.setBackground(new Color(230,255,238));
+        resetButton.setFont(new Font("monospaced", Font.PLAIN, 12));
+        resetButton.setFocusPainted(false);
+        resetButton.setBorderPainted(true);
+        resetButton.setFocusable(false);
+
+
+        // p1.setLayout(null);
         userIDLabel.setBounds(50, 100, 75, 25);
         userPasswordLabel.setBounds(50, 150, 75, 25);
 
@@ -69,15 +124,28 @@ public class SigninPage implements ActionListener{
         resetButton.setFocusable(false);
         resetButton.addActionListener(this);
 
-        p1.add(userIDLabel);
-        p1.add(userPasswordLabel);
-        p1.add(MessageLabel);
-        p1.add(userIDField);
-        p1.add(userPasswordField);
-        p1.add(loginButton);
-        p1.add(resetButton);
+
+        mainCenter.add(tom);
+        mainCenter.add(userIDLabel);
+        mainCenter.add(userPasswordLabel);
+        mainCenter.add(MessageLabel);
+        mainCenter.add(userIDField);
+        mainCenter.add(userPasswordField);
+        mainCenter.add(loginButton);
+        mainCenter.add(resetButton);
+
+
+
+        JLabel rights = new JLabel("All Rights Reserved For CRS®");
+        rights.setFont(new Font("monospaced", Font.PLAIN, 10));
+
+        mainBottom.add(rights);
         
-        frame.add(p1,BorderLayout.CENTER);
+        // mainCenter.add(p1, BorderLayout.CENTER);
+
+        frame.add(mainTop, BorderLayout.NORTH);
+        frame.add(mainCenter,BorderLayout.CENTER);
+        frame.add(mainBottom,BorderLayout.SOUTH);
 
 
     }

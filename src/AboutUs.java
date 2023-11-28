@@ -52,6 +52,7 @@ JFrame frame = new JFrame("About Us");
         textArea.setBackground(new Color(0, 0, 0));
         textArea.setLineWrap(true);
         textArea.setFont(new Font("Gabriola", Font.PLAIN, 15));
+        textArea.setEditable(false);
 
         JScrollPane scrollPane = new JScrollPane(textArea);
         scrollPane.getViewport().setOpaque(false);
