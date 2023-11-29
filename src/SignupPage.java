@@ -11,6 +11,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.HashMap;
 
 public class SignupPage extends JFrame implements ActionListener{
@@ -35,8 +40,9 @@ public class SignupPage extends JFrame implements ActionListener{
     JLabel EmailLabel = new JLabel("Email:");
     JTextField EmailField = new JTextField(15);
 
+    
     JLabel CarLabel = new JLabel("Select a Car");
-    JComboBox CarField = new JComboBox<>();
+    JComboBox CarField = new JComboBox<>(cars.data);
 
     JLabel dateB = new JLabel("Starting Date:");
     private com.toedter.calendar.JDateChooser jDateChooser1 = new com.toedter.calendar.JDateChooser();
@@ -177,9 +183,15 @@ public class SignupPage extends JFrame implements ActionListener{
         p12.add(CarLabel, BorderLayout.WEST);
         p12.add(CarField, BorderLayout.EAST);
 
+
+
+
+
         jDateChooser1.setLayout(new FlowLayout());
         JTextFieldDateEditor jDateChooser1editor = (JTextFieldDateEditor) jDateChooser1.getDateEditor();
         jDateChooser1editor.setEditable(false);
+
+        
         
 
         p8.add(dateB, BorderLayout.WEST);
@@ -299,6 +311,13 @@ public class SignupPage extends JFrame implements ActionListener{
                 JOptionPane.showMessageDialog(rootPane, "This is not a real Email BRO!", getTitle(), JOptionPane.ERROR_MESSAGE);
                 flag=1;
             }
+
+            if(EmailField.getText().contains(".com") == false){
+                JOptionPane.showMessageDialog(rootPane, "This is not a real Email BRO!", getTitle(), JOptionPane.ERROR_MESSAGE);
+                flag=1;
+            }
+
+
             if(EmailField.getText().equals("")){
                 JOptionPane.showMessageDialog(rootPane, "The Age Field is Empty!", getTitle(), JOptionPane.ERROR_MESSAGE);
                 flag=1;
@@ -330,7 +349,35 @@ public class SignupPage extends JFrame implements ActionListener{
             }
 
             if(flag == 0){
-                JOptionPane.showMessageDialog(rootPane, "Your All Set", getTitle(), JOptionPane.INFORMATION_MESSAGE);
+
+
+                String name = NameField.getText();
+                String email = EmailField.getText();
+                String nationality = NationalityField.getText();
+                String personalid = PersonalIDField.getText();
+                String car = CarField.getSelectedItem().toString();
+                String datestart = jDateChooser1.getDateFormatString();
+                String dateend = jDateChooser2.getDateFormatString();
+                String comments = txt.getText();
+
+
+
+                User user = addUser(name,email,nationality,personalid,car,datestart,dateend,comments); 
+
+
+                if(user != null){
+                    JOptionPane.showMessageDialog(rootPane, "Registration Added Successfully "+user.name, getTitle(), JOptionPane.INFORMATION_MESSAGE);
+                }
+                else{
+                    JOptionPane.showMessageDialog(rootPane, "somthing went wrong ", getTitle(), JOptionPane.ERROR_MESSAGE);
+                }
+
+
+
+
+
+
+                // JOptionPane.showMessageDialog(rootPane, "Your All Set", getTitle(), JOptionPane.INFORMATION_MESSAGE);
                 MyFrame.SignUp.setEnabled(true);
                 frame.dispose();
                 
@@ -339,5 +386,56 @@ public class SignupPage extends JFrame implements ActionListener{
             }
         }
     
+    }
+
+
+    private User addUser(String name,String email,String nationality,String personalid,String car,String datestart,String dateend,String comments){
+        User user = null;
+
+        final String DB_URL = "jdbc:mysql://localhost/crs?serverTimezone=UTC";
+        final String USERNAME = "root";
+        final String PASSWORD = "";
+
+
+        try{
+            Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            //Supposed to connect correctly to DB
+            Statement stmt = conn.createStatement();
+            String sql = "INSERT INTO user (name,email,nationality,personalid,car,datestart,dateend,comments)"
+                            + "VALUES (?,?,?,?,?,?,?,?)";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, email);
+            preparedStatement.setString(3, nationality);
+            preparedStatement.setString(4, personalid);
+            preparedStatement.setString(5, car);
+            preparedStatement.setString(6, datestart);
+            preparedStatement.setString(7, dateend);
+            preparedStatement.setString(8, comments);
+
+            int addedRows = preparedStatement.executeUpdate();
+
+            if(addedRows > 0){
+                user = new User();
+                user.name = name;
+                user.email = email;
+                user.nationality = nationality;
+                user.personalid = personalid;
+                user.car = car;
+                user.datestart = datestart;
+                user.dateend = dateend;
+                user.comments = comments;
+                
+
+            }
+
+            stmt.close();
+            conn.close();
+        }catch(Exception e){
+            System.out.println("DataBase Connection Failed :( ");
+        }
+
+
+        return user;
     }
 }

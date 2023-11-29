@@ -13,7 +13,7 @@ public class cars extends JFrame implements MouseListener{
 
 
     // The data to display in the JList
-    private String[] data = {"Toyota Corolla (2023)", "Toyota Camery (2021)", "Kia Cadenza (2020)", "Nissan VTC (2022)", "Ford Mustang (2023)", "Hyundai Accent (2022)", "Hyundai Elantra (2023)", "GMC Yukon (2023)", "GMC Sierra 1500 (2022)"};
+    public static String[] data = {"Toyota Corolla (2023)", "Toyota Camery (2021)", "Kia Cadenza (2020)", "Nissan VTC (2022)", "Ford Mustang (2023)", "Hyundai Accent (2022)", "Hyundai Elantra (2023)", "GMC Yukon (2023)", "GMC Sierra 1500 (2022)"};
 
     // The components of the GUI
     private JTextField searchField;
