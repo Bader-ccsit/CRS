@@ -46,9 +46,13 @@ public class SignupPage extends JFrame implements ActionListener{
 
     JLabel dateB = new JLabel("Starting Date:");
     private com.toedter.calendar.JDateChooser jDateChooser1 = new com.toedter.calendar.JDateChooser();
+
+    JTextFieldDateEditor jDateChooser1editor;
     
     JLabel dateE = new JLabel("Ending Date:");
     private com.toedter.calendar.JDateChooser jDateChooser2 = new com.toedter.calendar.JDateChooser();
+
+    JTextFieldDateEditor jDateChooser2editor;
 
     JLabel txtLabel = new JLabel("Comments (Optional)");
     JTextArea txt = new JTextArea(3, 20);
@@ -188,9 +192,10 @@ public class SignupPage extends JFrame implements ActionListener{
 
 
         jDateChooser1.setLayout(new FlowLayout());
-        JTextFieldDateEditor jDateChooser1editor = (JTextFieldDateEditor) jDateChooser1.getDateEditor();
+        jDateChooser1.setDateFormatString("dd-MM-yyyy");
+        jDateChooser1editor = (JTextFieldDateEditor) jDateChooser1.getDateEditor();           //DATE CHOOSER VALUE
         jDateChooser1editor.setEditable(false);
-
+        
         
         
 
@@ -198,7 +203,8 @@ public class SignupPage extends JFrame implements ActionListener{
         p8.add(jDateChooser1, BorderLayout.EAST);
 
         jDateChooser2.setLayout(new FlowLayout());
-        JTextFieldDateEditor jDateChooser2editor = (JTextFieldDateEditor) jDateChooser2.getDateEditor();
+        jDateChooser2.setDateFormatString("dd-MM-yyyy");
+        jDateChooser2editor = (JTextFieldDateEditor) jDateChooser2.getDateEditor();            //DATE CHOOSER VALUE
         jDateChooser2editor.setEditable(false);
         
 
@@ -289,7 +295,10 @@ public class SignupPage extends JFrame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+
         if(e.getSource() == reset){
+            
             NameField.setText("");
             EmailField.setText("");
             NationalityField.setText("");
@@ -301,7 +310,14 @@ public class SignupPage extends JFrame implements ActionListener{
         }
 
         if(e.getSource() == submit){
+
             int flag = 0;
+            
+            // JOptionPane.showMessageDialog(null, jDateChooser1.getDate());
+            
+            java.sql.Date today = java.sql.Date.valueOf(java.time.LocalDate.now());
+
+
             if(NameField.getText().equals("")){
                 JOptionPane.showMessageDialog(rootPane, "The Name Field is Empty!", getTitle(), JOptionPane.ERROR_MESSAGE);
                 flag=1;
@@ -319,7 +335,7 @@ public class SignupPage extends JFrame implements ActionListener{
 
 
             if(EmailField.getText().equals("")){
-                JOptionPane.showMessageDialog(rootPane, "The Age Field is Empty!", getTitle(), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(rootPane, "The Email Field is Empty!", getTitle(), JOptionPane.ERROR_MESSAGE);
                 flag=1;
             }
 
@@ -338,6 +354,8 @@ public class SignupPage extends JFrame implements ActionListener{
             //     flag=1;
             // }
 
+            
+
             if(jDateChooser1.getDate() == null){
                 JOptionPane.showMessageDialog(rootPane, "The Begining Date Field is Empty!", getTitle(), JOptionPane.ERROR_MESSAGE);
                 flag=1;
@@ -348,16 +366,30 @@ public class SignupPage extends JFrame implements ActionListener{
                 flag=1;
             }
 
+            
+
+            
+            if (jDateChooser1.getDate() != null && jDateChooser2.getDate() != null && jDateChooser1.getDate().before(today)) {
+                JOptionPane.showMessageDialog(rootPane, "You Cannot Book A Car in the Past!", getTitle(), JOptionPane.ERROR_MESSAGE);
+                flag=1;
+            }
+
+            if( jDateChooser1.getDate() != null && jDateChooser2.getDate() != null && jDateChooser1.getDate().getTime()>jDateChooser2.getDate().getTime()){    
+                
+                JOptionPane.showMessageDialog(rootPane, "You Cannot END with a passed Date!", getTitle(), JOptionPane.ERROR_MESSAGE);
+                flag=1;
+            }
+
+            
+
             if(flag == 0){
-
-
                 String name = NameField.getText();
                 String email = EmailField.getText();
                 String nationality = NationalityField.getText();
                 String personalid = PersonalIDField.getText();
                 String car = CarField.getSelectedItem().toString();
-                String datestart = jDateChooser1.getDateFormatString();
-                String dateend = jDateChooser2.getDateFormatString();
+                String datestart = jDateChooser1editor.getText();
+                String dateend = jDateChooser2editor.getText();
                 String comments = txt.getText();
 
 
@@ -380,6 +412,8 @@ public class SignupPage extends JFrame implements ActionListener{
                 // JOptionPane.showMessageDialog(rootPane, "Your All Set", getTitle(), JOptionPane.INFORMATION_MESSAGE);
                 MyFrame.SignUp.setEnabled(true);
                 frame.dispose();
+                
+
                 
             }else{
                 flag = 0;

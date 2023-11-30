@@ -28,7 +28,7 @@ public class SigninPage implements ActionListener{
     JPasswordField userPasswordField = new JPasswordField();
     JLabel userIDLabel = new JLabel("userID:");
     JLabel userPasswordLabel = new JLabel("Password:");
-    JLabel MessageLabel = new JLabel("This is a TEST");
+    JLabel MessageLabel = new JLabel("");             //The Result of the Login
 
 
     HashMap<String,String> logininfo = new HashMap<String,String>();
