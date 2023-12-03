@@ -20,6 +20,7 @@ public class terms {
         frame.setBounds(0,440,400,380);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
+        frame.setResizable(false);      //RESIZABLE Property
         frame.setLayout(new BorderLayout());
         ImageIcon icon = new ImageIcon("src/Assets/MyFrameAssets/Icon.jfif");
         frame.setIconImage(icon.getImage());

@@ -1,4 +1,5 @@
 
+import javax.management.JMException;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
@@ -14,6 +15,9 @@ import java.awt.event.MouseListener;
 
 public class MyFrame extends JFrame implements ActionListener, MouseListener{
     
+
+    JFrame frame;
+
     JButton AboutUs;
     static JButton SignUp;
     static JButton SignIn;
@@ -25,6 +29,9 @@ public class MyFrame extends JFrame implements ActionListener, MouseListener{
     JMenuItem loadItem;
     JMenuItem saveItem;
     JMenuItem exitItem;
+    JMenuItem helpSignInItem;
+    JMenuItem contactDevItem;
+    JMenuItem fullScreenItem;
 
     JLabel find_text;
     JLabel terms_text;
@@ -32,10 +39,11 @@ public class MyFrame extends JFrame implements ActionListener, MouseListener{
   
 
     public MyFrame(){
-        JFrame frame = new JFrame("Car Rental System");                             //creating JFrame
+        frame = new JFrame("Car Rental System");                             //creating JFrame
         frame.setBounds(500, 300, 520, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        frame.setResizable(false);      //RESIZABLE Property
         ImageIcon icon = new ImageIcon("src/Assets/MyFrameAssets/Icon.jfif");
         frame.setIconImage(icon.getImage());
         frame.getContentPane().setBackground(new Color(124, 152, 176));
@@ -103,14 +111,35 @@ public class MyFrame extends JFrame implements ActionListener, MouseListener{
         exitItem = new JMenuItem("exit");
 
 
+        fullScreenItem = new JMenuItem("FullScreen");
+
+
+        helpSignInItem = new JMenuItem("How To SignIn?");
+        contactDevItem = new JMenuItem("Contact The DEV");
+
         loadItem.addActionListener(this);
         saveItem.addActionListener(this);
         exitItem.addActionListener(this);
 
 
+        fullScreenItem.addActionListener(this);
+
+
+        helpSignInItem.addActionListener(this);
+        contactDevItem.addActionListener(this);
+
+
         filemenu.add(loadItem);
         filemenu.add(saveItem);
         filemenu.add(exitItem);
+
+
+        editmenu.add(fullScreenItem);
+
+
+        helpmenu.add(helpSignInItem);
+        helpmenu.add(contactDevItem);
+
 
         menuBar.add(filemenu);
         menuBar.add(editmenu);
@@ -260,6 +289,22 @@ public class MyFrame extends JFrame implements ActionListener, MouseListener{
 
        if(e.getSource() == saveItem){
         JOptionPane.showMessageDialog(null, "the file has been saved successfuly", "File saved Conformation", JOptionPane.INFORMATION_MESSAGE);
+       }
+
+       if(e.getSource() == helpSignInItem){
+        JOptionPane.showMessageDialog(null, "To SignIn Type Your EMAIL as the userID \n And you're NationalID As Password!", "How To SignIn?", JOptionPane.INFORMATION_MESSAGE);
+       }
+
+       if(e.getSource() == contactDevItem){
+        JOptionPane.showMessageDialog(null, "Please Reach out to us by our Email \n carrentalsystem@gmail.com", "Contact Us", JOptionPane.INFORMATION_MESSAGE);
+       }
+
+       if(e.getSource() == fullScreenItem){
+        if(JOptionPane.showConfirmDialog(null, "The Program Should Run on fixed size screen, and it can cause the program to not display correctly, \n DO YOU WISH TO CONTINUE?", "Full Screen Activation", JOptionPane.YES_NO_OPTION) == 0){
+            frame.setResizable(true);
+        }else{
+            frame.setResizable(false);
+        }
        }
 
        if(e.getSource() == exitItem){

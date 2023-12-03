@@ -101,6 +101,7 @@ public class cars extends JFrame implements MouseListener{
         ImageIcon icon = new ImageIcon("src/Assets/MyFrameAssets/Icon.jfif");
         setIconImage(icon.getImage());
         setVisible(true);
+        setResizable(false);      //RESIZABLE Property
     }
 
     // A method to update the list based on the search query

@@ -17,6 +17,7 @@ JFrame frame = new JFrame("About Us");
         frame.setLayout(new BorderLayout());
         ImageIcon icon = new ImageIcon("src/Assets/MyFrameAssets/Icon.jfif");
         frame.setIconImage(icon.getImage());
+        frame.setResizable(false);      //RESIZABLE Property
 
         JPanel left = new JPanel();
         JPanel right = new JPanel();

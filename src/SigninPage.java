@@ -7,6 +7,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
@@ -30,6 +35,11 @@ public class SigninPage implements ActionListener{
     JLabel userPasswordLabel = new JLabel("Password:");
     JLabel MessageLabel = new JLabel("");             //The Result of the Login
 
+    
+
+
+    public User user;
+
 
     HashMap<String,String> logininfo = new HashMap<String,String>();
     public SigninPage(HashMap<String,String> loginInfoOriginal){
@@ -42,6 +52,7 @@ public class SigninPage implements ActionListener{
         frame.setBounds(1100,0,400,400);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
+        frame.setResizable(false);      //RESIZABLE Property
         frame.setLayout(new BorderLayout());
         ImageIcon icon = new ImageIcon("src/Assets/MyFrameAssets/Icon.jfif");
         frame.setIconImage(icon.getImage());
@@ -106,6 +117,9 @@ public class SigninPage implements ActionListener{
         resetButton.setFocusable(false);
 
 
+        
+
+
         // p1.setLayout(null);
         userIDLabel.setBounds(50, 100, 75, 25);
         userPasswordLabel.setBounds(50, 150, 75, 25);
@@ -124,6 +138,8 @@ public class SigninPage implements ActionListener{
         resetButton.setFocusable(false);
         resetButton.addActionListener(this);
 
+        
+
 
         mainCenter.add(tom);
         mainCenter.add(userIDLabel);
@@ -133,7 +149,7 @@ public class SigninPage implements ActionListener{
         mainCenter.add(userPasswordField);
         mainCenter.add(loginButton);
         mainCenter.add(resetButton);
-
+        
 
 
         JLabel rights = new JLabel("All Rights Reserved For CRS®");
@@ -149,12 +165,13 @@ public class SigninPage implements ActionListener{
 
 
     }
-    @Override
-    public void actionPerformed(ActionEvent e) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
         int loggedin=0;
         if(e.getSource() == resetButton){
             userIDField.setText("");
             userPasswordField.setText("");
+            MessageLabel.setText("");
         }
 
         if(e.getSource() == loginButton){
@@ -162,31 +179,104 @@ public class SigninPage implements ActionListener{
             String userID = userIDField.getText();
             String password = String.valueOf(userPasswordField.getPassword());
 
-            if(logininfo.containsKey(userID)){
-                if(logininfo.get(userID).equals(password)){
-                    MessageLabel.setForeground(Color.green);
-                    MessageLabel.setText("Login Successful");
-                    frame.dispose();
-                    WelcomePage welcomepage = new WelcomePage(userID);
 
-                    loggedin=1;     //change the value for the signin
-                }
-                else{
+
+            user = getAuthenticatedUser(userID,password);
+
+            if(user != null){
+                MessageLabel.setForeground(Color.green);
+                MessageLabel.setText("Login Successful");
+                frame.dispose();
+                WelcomePage welcomepage = new WelcomePage(userID);
+
+                loggedin=1;     //change the value for the signin
+            }else{
+
+                if(userIDField.getText().contains("@") == false){
+
+                    if(logininfo.containsKey(userID)){
+                    if(logininfo.get(userID).equals(password)){
+                        MessageLabel.setForeground(Color.green);
+                        MessageLabel.setText("Login Successful");
+                        frame.dispose();
+                        WelcomePage welcomepage = new WelcomePage(userID);
+
+                        loggedin=1;     //change the value for the signin
+                    }else{
                     MessageLabel.setForeground(Color.red);
                     MessageLabel.setText("Wrong Password");
-                }
-            }
+                    }
+                    
+                }    
 
-            else{
-                MessageLabel.setForeground(Color.red);
+                if(logininfo.containsKey(userID) == false){
+
+                    MessageLabel.setForeground(Color.red);
                     MessageLabel.setText("Username NOT Found!");
-            }
-
-            if(loggedin==1){
-                MyFrame.SignIn.setEnabled(false);
+                }
+                }
 
                 
+
+                if(loggedin==1){
+                    MyFrame.SignIn.setEnabled(false);
+
+                    
+                }
+
+            
+                if(userIDField.getText().contains("@")){
+
+                    MessageLabel.setForeground(Color.red);
+                    MessageLabel.setText("Wrong Credentials!");
+                }
+                }
+                
+            
             }
         }
+            
+            
+    
+
+    private User getAuthenticatedUser(String userID, String password){
+        User user = null;
+
+
+        final String DB_URL = "jdbc:mysql://localhost/crs?serverTimezone=UTC";
+        final String USERNAME = "root";
+        final String PASSWORD = "";
+
+        try{
+            Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+            
+            Statement stmt = conn.createStatement();
+            String sql = "SELECT * FROM user WHERE email=? AND personalid=?";
+            PreparedStatement preparedStatement = conn.prepareStatement(sql);
+            preparedStatement.setString(1, userID);
+            preparedStatement.setString(2, password);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                user = new User();
+                           
+                user.name = resultSet.getString(1);
+                user.email = resultSet.getString(2);
+                user.nationality = resultSet.getString(3);
+                user.personalid = resultSet.getString(4);
+                user.car = resultSet.getString(5);
+                user.datestart = resultSet.getString(6);
+                user.dateend = resultSet.getString(7);
+                user.comments = resultSet.getString(8);
+
+            }
+
+            stmt.close();
+            conn.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return user;
     }
 }

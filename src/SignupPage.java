@@ -74,6 +74,7 @@ public class SignupPage extends JFrame implements ActionListener{
         frame.setBounds(0,0,400,440);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
+        frame.setResizable(false);      //RESIZABLE Property
         frame.setLayout(new BorderLayout());
         ImageIcon icon = new ImageIcon("src/Assets/MyFrameAssets/Icon.jfif");
         frame.setIconImage(icon.getImage());
@@ -318,6 +319,39 @@ public class SignupPage extends JFrame implements ActionListener{
             java.sql.Date today = java.sql.Date.valueOf(java.time.LocalDate.now());
 
 
+
+
+            final String DB_URL = "jdbc:mysql://localhost/crs?serverTimezone=UTC";
+            final String USERNAME = "root";
+            final String PASSWORD = "";
+            try{
+
+                Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+                Statement stmt = conn.createStatement();
+
+                String sql = "SELECT * FROM user WHERE email='" + EmailField.getText() + "'";
+
+                ResultSet rs = stmt.executeQuery(sql);
+
+                if(rs.next()){
+                    JOptionPane.showMessageDialog(rootPane, "This Email is used!", getTitle(), JOptionPane.ERROR_MESSAGE);
+                    flag=1;
+                }
+                else{
+                    System.out.println("this Email Account is Avalible");
+                }
+                stmt.close();
+                conn.close();
+            }catch(Exception x){
+                System.out.println("Error:" + x.getMessage());
+            }
+
+
+
+
+
+
+
             if(NameField.getText().equals("")){
                 JOptionPane.showMessageDialog(rootPane, "The Name Field is Empty!", getTitle(), JOptionPane.ERROR_MESSAGE);
                 flag=1;
@@ -338,6 +372,8 @@ public class SignupPage extends JFrame implements ActionListener{
                 JOptionPane.showMessageDialog(rootPane, "The Email Field is Empty!", getTitle(), JOptionPane.ERROR_MESSAGE);
                 flag=1;
             }
+
+            
 
             if(NationalityField.getText().equals("")){
                 JOptionPane.showMessageDialog(rootPane, "The Nationality Field is Empty!", getTitle(), JOptionPane.ERROR_MESSAGE);

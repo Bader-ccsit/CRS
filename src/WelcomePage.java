@@ -8,6 +8,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -34,10 +35,16 @@ public class WelcomePage {
     JTable table = new JTable();
 
 
+    String emailname;
+    JButton delButton = new JButton("Delete");
+    DefaultTableModel model;
+
+
 
 
     WelcomePage(String userID){
 
+        emailname = userID;
         
         frame = new JFrame("Administrator Page");
         frame.setBounds(1100,0,400,400);
@@ -99,6 +106,14 @@ public class WelcomePage {
         DisplayData.setFocusable(false);
         
         
+        delButton.setBackground(new Color(230,255,238));
+        delButton.setFont(new Font("monospaced", Font.PLAIN, 11));
+        delButton.setFocusPainted(false);
+
+        delButton.setFocusable(false);
+        
+
+
 
 
         
@@ -112,18 +127,12 @@ public class WelcomePage {
         mainBottom.setBackground(new Color(230,238,255));
         
 
-        
-        
-        
-        
-        
+           
         
         JLabel rights = new JLabel("All Rights Reserved For CRS®");
         rights.setFont(new Font("monospaced", Font.PLAIN, 10));
 
         mainBottom.add(rights);
-        
-        
         
         
         
@@ -152,21 +161,131 @@ public class WelcomePage {
             }
         });
 
-            
-        DisplayData.addActionListener(new ActionListener() {
+        
+        if(userID.contains("@") == false){
+            DisplayData.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
+
+                DisplayData.setEnabled(false);          //Disabled
+
+                p1.add(delButton);
+
                 final String DB_URL = "jdbc:mysql://localhost/crs?serverTimezone=UTC";
                 final String USERNAME = "root";
                 final String PASSWORD = "";
 
                 try{
-                    JOptionPane.showMessageDialog(null,"connected successfully");
+                    
                     frame.setBounds(1030, 0, 500, 500);
                     Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
                     Statement stmt = conn.createStatement();
                     String query = "SELECT * FROM user";
                     ResultSet rs =stmt.executeQuery(query);
+                    java.sql.ResultSetMetaData rsmd = rs.getMetaData();
+                    model = (DefaultTableModel) table.getModel();
+
+                    int cols = rsmd.getColumnCount();
+                    String[] colName=new String[cols];
+                    for(int i=0;i<cols;i++)
+                        colName[i] = rsmd.getColumnName(i+1);
+                        
+                    model.setColumnIdentifiers(colName);
+                    String id, name, email,nationality, personalid, car, datestart, dateend, comments;
+                    
+                    while(rs.next()){
+                        id = rs.getString(1);               //supposed to be INT
+                        name = rs.getString(2);
+                        email = rs.getString(3);
+                        nationality = rs.getString(4);
+                        personalid = rs.getString(5);
+                        car = rs.getString(6);
+                        datestart = rs.getString(7);
+                        dateend = rs.getString(8);
+                        comments = rs.getString(9);
+                        String[] row = {id,name,email,nationality,personalid,car,datestart,dateend,comments};
+                        model.addRow(row);
+                    }
+
+                    System.out.println("Connected Successfully To DataBase :) ");
+                    stmt.close();
+                    conn.close();
+
+                }catch(Exception ActionEvent){
+                    System.out.println("DataBase Connection Failed :( ");
+                }
+            }
+        });}
+
+
+        delButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+
+
+                String t = JOptionPane.showInputDialog(rights, "Enter the ID of the user that you want to delete", "Delete Rows From DataBase!", JOptionPane.WARNING_MESSAGE);
+
+
+
+                final String DB_URL = "jdbc:mysql://localhost/crs?serverTimezone=UTC";
+                final String USERNAME = "root";
+                final String PASSWORD = "";
+
+
+                try{
+                    Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+
+                    String sql = "DELETE FROM user WHERE id=?";
+                    PreparedStatement stmt = conn.prepareStatement(sql);
+
+                    stmt.setString(1, t);
+
+                    int rows = stmt.executeUpdate();
+
+                    if(rows >0){
+                        JOptionPane.showMessageDialog(rights, "Rows Has Been Modified For the Table ' user ' ", "Conform Modification", JOptionPane.INFORMATION_MESSAGE);
+
+                        while (model.getRowCount()>0)
+                        {
+                            model.removeRow(0);         //clear Table
+                        }
+
+                        DisplayData.setEnabled(true);
+                    }
+                    stmt.close();
+                    conn.close();
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+
+        if(userID.contains("@") == true){
+            DisplayData.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+
+                DisplayData.setEnabled(false);      //Disabled
+                
+
+                final String DB_URL = "jdbc:mysql://localhost/crs?serverTimezone=UTC";
+                final String USERNAME = "root";
+                final String PASSWORD = "";
+
+                try{
+                    
+                    frame.setBounds(1030, 0, 500, 500);
+                    Connection conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+                    
+                    
+                    Statement stmt = conn.createStatement();
+                    String sql = "SELECT * FROM user WHERE email=? ";
+                    PreparedStatement preparedStatement = conn.prepareStatement(sql);
+                    preparedStatement.setString(1, userID);
+                    
+                    ResultSet rs = preparedStatement.executeQuery();
+                    
                     java.sql.ResultSetMetaData rsmd = rs.getMetaData();
                     DefaultTableModel model = (DefaultTableModel) table.getModel();
 
@@ -191,6 +310,8 @@ public class WelcomePage {
                         String[] row = {id,name,email,nationality,personalid,car,datestart,dateend,comments};
                         model.addRow(row);
                     }
+
+                    System.out.println("Connected Successfully To DataBase :) ");
                     stmt.close();
                     conn.close();
 
@@ -198,7 +319,7 @@ public class WelcomePage {
                     System.out.println("DataBase Connection Failed :( ");
                 }
             }
-        });
+        });}
         
         frame.add(mainTop, BorderLayout.NORTH);
         frame.add(mainCenter, BorderLayout.CENTER);
